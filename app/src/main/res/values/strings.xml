@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name" translatable="false">Popular movies</string>
+
+
+    <string name="tmdb_api_key" translatable="false">7b519f88d04dc144946965c517b9d723</string>
+
+    <string name="tmdb_scheme" translatable="false">http</string>
+    <string name="tmdb_authority" translatable="false">api.themoviedb.org</string>
+    <string name="tmdb_path_movie" translatable="false">3/movie</string>
+    <string name="tmdb_path_popular" translatable="false">popular</string>
+    <string name="tmdb_param_api_key" translatable="false">api_key</string>
+    <string name="tmdb_path_top_rated" translatable="false">top_rated</string>
+    <string name="tmdb_prefix_images" translatable="false">http://image.tmdb.org/t/p/w342/</string>
+
+    <string name="user_rating">User rating: </string>
+    <string name="release_date">Release date: </string>
+    <string name="head_overview">Synopsis</string>
+
+    <string name="json_results" translatable="false">results</string>
+    <string name="json_id_movie" translatable="false">id</string>
+    <string name="json_poster_path" translatable="false">poster_path</string>
+    <string name="json_original_title" translatable="false">original_title</string>
+    <string name="json_overview" translatable="false">overview</string>
+    <string name="json_vote_average" translatable="false">vote_average</string>
+    <string name="json_release_date" translatable="false">release_date</string>
+
+    <string name="log_error_tag" translatable="false">ERROR</string>
+    <string name="log_error_parsing_json">"Error parsing JSON "</string>
+    <string name="no_internet_connection">No internet connection. Please enable WIFI/DATA</string>
+    <string name="error_retrieving_movie_info">Error retrieving movie info. Please, try again later.</string>
+
+
+    <string-array name="array_filter_movies">
+        <item>Popular</item>
+        <item>Top rated</item>
+    </string-array>
+
+</resources>
