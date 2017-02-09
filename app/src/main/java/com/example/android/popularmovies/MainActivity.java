@@ -7,18 +7,15 @@ package com.example.android.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,17 +24,7 @@ import android.widget.Toast;
 
 import com.example.android.popularmovies.bean.Movie;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * Main activity for popular movies. Shows a grid of poster movies,
@@ -47,9 +34,13 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
 
+    private static final String LIST_STATE_KEY = "LIST_STATE_KEY";
     private RecyclerView mRecyclerView;
     private MoviesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private Integer scrollY;
+    private boolean fetchScroll = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +56,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        mLayoutManager = new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getBaseContext()));
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                fetchScroll = true;
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(fetchScroll) {
+                    scrollY = dy;
+                }
+            }
+        });
 
         // Spinner
         Spinner spinner = (Spinner) findViewById(R.id.sp_filter);
@@ -133,18 +142,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
 
-        int orientation = getResources().getConfiguration().orientation;
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getBaseContext())));
 
-        // Portrait
-        if(orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // GridLayoutManager
-            mLayoutManager = new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getBaseContext()));
-            mRecyclerView.setLayoutManager(mLayoutManager);
-        } else { // Landscape
-            mLayoutManager = new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getBaseContext()));
-            mRecyclerView.setLayoutManager(mLayoutManager);
+        if(null != scrollY) {
+            mRecyclerView.scrollTo(0, scrollY);
+
+            fetchScroll = false;
         }
     }
+
+
 
     private static int calculateNoOfColumns(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
