@@ -1,4 +1,10 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
 
+    <dimen name="dim_padding">8dp</dimen>
+    <dimen name="dim_text_title">34sp</dimen>
+    <dimen name="dim_poster_heigth">250dp</dimen>
+    <dimen name="dim_text_details">14sp</dimen>
+    <dimen name="dim_text_subtitle">24sp</dimen>
+    <dimen name="dim_padding_small">1dp</dimen>
 </resources>

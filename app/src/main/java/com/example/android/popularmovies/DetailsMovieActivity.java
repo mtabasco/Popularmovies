@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,32 +46,50 @@ public class DetailsMovieActivity extends AppCompatActivity {
 
         // Retrieve the ID of the movie we want to see details
         Intent intent = getIntent();
-        String idMovie = intent.getStringExtra(getString(R.string.json_id_movie));
 
-        // Build query to retrieve the movie details
-        Uri.Builder builder = new Uri.Builder().scheme(getString(R.string.tmdb_scheme))
-                .authority(getString(R.string.tmdb_authority))
-                .appendEncodedPath(getString(R.string.tmdb_path_movie))
-                .appendPath(idMovie)
-                .appendQueryParameter(getString(R.string.tmdb_param_api_key), getString(R.string.tmdb_api_key));
+        String idMovie = getString(R.string.json_id_movie);
 
-        String myUrl = builder.build().toString();
+        if (null != intent && intent.hasExtra(idMovie)) {
+            idMovie = intent.getStringExtra(idMovie);
 
-        // Call to AsyncTask to retrieve details
-        new FetchMovieDetailsTask(this, new FetchMovieDetailsTaskCompleteListener()).execute(myUrl);
+            // Build query to retrieve the movie details
+            Uri.Builder builder = new Uri.Builder().scheme(getString(R.string.tmdb_scheme))
+                    .authority(getString(R.string.tmdb_authority))
+                    .appendEncodedPath(getString(R.string.tmdb_path_movie))
+                    .appendPath(idMovie)
+                    .appendQueryParameter(getString(R.string.tmdb_param_api_key), getString(R.string.tmdb_api_key));
+
+            String myUrl = builder.build().toString();
+
+            // Call to AsyncTask to retrieve details
+            new FetchMovieDetailsTask(this, new FetchMovieDetailsTaskCompleteListener()).execute(myUrl);
+        } else {
+
+            Toast.makeText(getApplicationContext(), R.string.error_retrieving_movie_info, Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
 
+                // overrides the behaviour of appbar's back button
+                onBackPressed();
+                return true;
+        }
+        return false;
+    }
 
-    public class FetchMovieDetailsTaskCompleteListener implements AsyncTaskCompleteListener<Movie>
-    {
+    public class FetchMovieDetailsTaskCompleteListener implements AsyncTaskCompleteListener<Movie> {
 
         @Override
-        public void onTaskComplete(Movie movieDetail)
-        {
-            if(null == movieDetail) {
+        public void onTaskComplete(Movie movieDetail) {
+            if (null == movieDetail) {
 
-                Toast.makeText(getApplicationContext(), R.string.error_retrieving_movie_info,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.error_retrieving_movie_info, Toast.LENGTH_SHORT).show();
             } else {
 
                 // Load views
