@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">Popular movies</string>
 
 
-    <string name="tmdb_api_key" translatable="false"></string>
+    <string name="tmdb_api_key" translatable="false">7b519f88d04dc144946965c517b9d723</string>
 
     <string name="tmdb_scheme" translatable="false">http</string>
     <string name="tmdb_authority" translatable="false">api.themoviedb.org</string>
