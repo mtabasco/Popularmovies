@@ -4,11 +4,14 @@
 
 package com.example.android.popularmovies.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Bean class for storing movie info
  */
 
-public class Movie {
+public class Movie implements Parcelable {
 
     private int idMovie;
     private String posterPath;
@@ -89,4 +92,40 @@ public class Movie {
 
     public Movie() {
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.idMovie);
+        dest.writeString(this.posterPath);
+        dest.writeString(this.originalTitle);
+        dest.writeString(this.overview);
+        dest.writeString(this.voteAverage);
+        dest.writeString(this.releaseDate);
+    }
+
+    protected Movie(Parcel in) {
+        this.idMovie = in.readInt();
+        this.posterPath = in.readString();
+        this.originalTitle = in.readString();
+        this.overview = in.readString();
+        this.voteAverage = in.readString();
+        this.releaseDate = in.readString();
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

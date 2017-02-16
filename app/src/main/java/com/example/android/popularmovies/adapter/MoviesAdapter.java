@@ -2,7 +2,7 @@
  * Copyright (C) 2016
  */
 
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.bean.Movie;
+import com.example.android.popularmovies.listener.OnMovieClickListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

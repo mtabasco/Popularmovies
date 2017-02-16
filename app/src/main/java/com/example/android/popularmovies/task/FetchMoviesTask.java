@@ -1,12 +1,13 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.task;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.bean.Movie;
+import com.example.android.popularmovies.listener.AsyncTaskCompleteListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;

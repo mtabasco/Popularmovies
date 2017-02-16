@@ -3,7 +3,7 @@
  */
 
 
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,20 +11,26 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.android.popularmovies.listener.AsyncTaskCompleteListener;
+import com.example.android.popularmovies.loader.MoviesLoader;
+import com.example.android.popularmovies.task.FetchMoviesTask;
+import com.example.android.popularmovies.adapter.MoviesAdapter;
+import com.example.android.popularmovies.listener.OnMovieClickListener;
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.bean.Movie;
 
 import java.util.List;
@@ -34,10 +40,11 @@ import java.util.List;
  * providing filter: popular and top rated.
  */
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, LoaderManager.LoaderCallbacks<List<Movie>> {
 
 
     private static final String LIST_STATE_KEY = "LIST_STATE_KEY";
+    private static final int MOVIES_LOADER = 100;
     private RecyclerView mRecyclerView;
     private MoviesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -74,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
-    }
 
+    }
 
 
     /**
@@ -94,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Uri.Builder builder = new Uri.Builder();
             String tmdbUrl;
 
+            Bundle args = new Bundle();
+
             switch (pos) {
                 case 0: // Popular movies filter
 
@@ -105,7 +114,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     tmdbUrl = builder.build().toString();
 
-                    new FetchMoviesTask(this, new FetchMoviesTaskCompleteListener()).execute(tmdbUrl);
+                    //new FetchMoviesTask(this, new FetchMoviesTaskCompleteListener()).execute(tmdbUrl);
+                    args.putString(getString(R.string.param_movie_url), tmdbUrl);
+
+                    loadLoader(MOVIES_LOADER, args);
 
                     return;
 
@@ -119,11 +131,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     tmdbUrl = builder.build().toString();
 
-                    new FetchMoviesTask(this, new FetchMoviesTaskCompleteListener()).execute(tmdbUrl);
+                    args.putString(getString(R.string.param_movie_url), tmdbUrl);
+
+                    loadLoader(MOVIES_LOADER, args);
 
             }
         }
     }
+
+    private void loadLoader(int loaderId, Bundle args) {
+
+        LoaderManager loaderManager = getSupportLoaderManager();
+        Loader<String> moviesLoader = loaderManager.getLoader(MOVIES_LOADER);
+
+        if (moviesLoader == null) {
+            loaderManager.initLoader(loaderId, args, this).forceLoad();
+        } else {
+            loaderManager.restartLoader(loaderId, args, this).forceLoad();
+        }
+    }
+
 
     @Override
     protected void onResume() {
@@ -151,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onRestoreInstanceState(state);
 
         // Retrieve list state and list/item positions
-        if(state != null)
+        if (state != null)
             mListState = state.getParcelable(LIST_STATE_KEY);
     }
 
@@ -168,28 +195,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    public class FetchMoviesTaskCompleteListener implements AsyncTaskCompleteListener<List<Movie>> {
-
-        @Override
-        public void onTaskComplete(List<Movie> result) {
-            // Create the Adapter
-            mAdapter = new MoviesAdapter(getApplicationContext(), result);
-            mRecyclerView.setAdapter(mAdapter);
-
-            // Add click listener. When clicked, start movie details activity
-            mAdapter.setOnMovieClickListener(new OnMovieClickListener() {
-                @Override
-                public void onMovieClick(Movie item) {
-
-                    Intent intent = new Intent(getApplicationContext(), DetailsMovieActivity.class);
-                    intent.putExtra(getString(R.string.json_id_movie), String.valueOf(item.getIdMovie()));
-
-                    startActivity(intent);
-                }
-            });
-        }
-    }
-
 
     /**
      * Checks if there is connectivity
@@ -199,4 +204,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+
+    @Override
+    public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+        return new MoviesLoader(this, null, args);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> result) {
+
+        // Create the Adapter
+        mAdapter = new MoviesAdapter(getApplicationContext(), result);
+        mRecyclerView.setAdapter(mAdapter);
+
+        // Add click listener. When clicked, start movie details activity
+        mAdapter.setOnMovieClickListener(new OnMovieClickListener() {
+            @Override
+            public void onMovieClick(Movie item) {
+
+                Intent intent = new Intent(getApplicationContext(), DetailsMovieActivity.class);
+                intent.putExtra(getString(R.string.json_id_movie), String.valueOf(item.getIdMovie()));
+
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Movie>> loader) {
+
+    }
+
 }
