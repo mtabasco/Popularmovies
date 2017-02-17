@@ -8,6 +8,7 @@
     <string name="tmdb_authority" translatable="false">api.themoviedb.org</string>
     <string name="tmdb_path_movie" translatable="false">3/movie</string>
     <string name="tmdb_path_popular" translatable="false">popular</string>
+    <string name="tmdb_path_reviews" translatable="false">reviews</string>
     <string name="tmdb_param_api_key" translatable="false">api_key</string>
     <string name="tmdb_path_top_rated" translatable="false">top_rated</string>
     <string name="tmdb_prefix_images" translatable="false">http://image.tmdb.org/t/p/w342/</string>
@@ -23,6 +24,9 @@
     <string name="json_overview" translatable="false">overview</string>
     <string name="json_vote_average" translatable="false">vote_average</string>
     <string name="json_release_date" translatable="false">release_date</string>
+    <string name="json_review_id" translatable="false">id</string>
+    <string name="json_review_author" translatable="false">author</string>
+    <string name="json_review_content" translatable="false">content</string>
 
     <string name="log_error_tag" translatable="false">ERROR</string>
     <string name="log_error_parsing_json">"Error parsing JSON "</string>
@@ -34,5 +38,12 @@
         <item>Popular</item>
         <item>Top rated</item>
     </string-array>
+    <string name="title_activity_details_movie">Movie Details</string>
+    <string name="action_favorite">Favorite</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="param_movie_object">movie_object</string>
+    <string name="param_movie_url">movie_url</string>
 
 </resources>

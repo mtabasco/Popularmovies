@@ -25,13 +25,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.listener.AsyncTaskCompleteListener;
-import com.example.android.popularmovies.loader.MoviesLoader;
-import com.example.android.popularmovies.task.FetchMoviesTask;
-import com.example.android.popularmovies.adapter.MoviesAdapter;
-import com.example.android.popularmovies.listener.OnMovieClickListener;
 import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.adapter.MoviesAdapter;
 import com.example.android.popularmovies.bean.Movie;
+import com.example.android.popularmovies.listener.OnMovieClickListener;
+import com.example.android.popularmovies.loader.MoviesLoader;
 
 import java.util.List;
 
@@ -114,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     tmdbUrl = builder.build().toString();
 
-                    //new FetchMoviesTask(this, new FetchMoviesTaskCompleteListener()).execute(tmdbUrl);
                     args.putString(getString(R.string.param_movie_url), tmdbUrl);
 
                     loadLoader(MOVIES_LOADER, args);

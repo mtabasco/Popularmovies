@@ -157,6 +157,7 @@ public class DetailsMovieActivity extends AppCompatActivity {
                 case 2: // Reviews
                     Fragment reviews = new ReviewsMovieFragment();
                     reviews.setArguments(args);
+                    return reviews;
                 }
             return null;
         }

@@ -1,12 +1,14 @@
-package com.example.android.popularmovies.task;
+package com.example.android.popularmovies.loader;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.bean.Movie;
+import com.example.android.popularmovies.bean.Review;
 import com.example.android.popularmovies.listener.AsyncTaskCompleteListener;
 
 import org.json.JSONArray;
@@ -22,35 +24,34 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * FetchMoviesTask do the http request to TMDB,
- * converts response in JSONObject and build a List of Movie beans.
- * This list is passed to create the adapter attached to the RecyclerView.
+ * Created by Coco on 16/02/2017.
  */
-public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
+
+public class ReviewsLoader extends AsyncTaskLoader<List<Review>> {
 
     OkHttpClient client = new OkHttpClient();
     private Context context;
-    private AsyncTaskCompleteListener<List<Movie>> listener;
+    private String urlMovie;
 
+    public ReviewsLoader(Context ctx, Bundle args) {
+        super(ctx);
 
-    public FetchMoviesTask(Context ctx, AsyncTaskCompleteListener<List<Movie>> listener)
-    {
         this.context = ctx;
-        this.listener = listener;
-    }
-
-    protected void onPreExecute()
-    {
-        super.onPreExecute();
+        this.urlMovie = args.getString(ctx.getString(R.string.param_movie_url));
     }
 
     @Override
-    protected List<Movie> doInBackground(String... params) {
+    protected void onStartLoading() {
+        super.onStartLoading();
+    }
 
-        List<Movie> movieList = new ArrayList<>();
+    @Override
+    public List<Review> loadInBackground() {
+
+        List<Review> reviewList = new ArrayList<>();
 
         Request.Builder builder = new Request.Builder();
-        builder.url(params[0]);
+        builder.url(urlMovie);
 
         Request request = builder.build();
 
@@ -72,11 +73,12 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
 
                         JSONObject jsonItem = jsonArray.getJSONObject(i);
 
-                        int idMovie = jsonItem.getInt(context.getString(R.string.json_id_movie));
-                        String posterPathMovie = jsonItem.getString(context.getString(R.string.json_poster_path)).substring(1);
+                        String idMovie = jsonItem.getString(context.getString(R.string.json_review_id));
+                        String author = jsonItem.getString(context.getString(R.string.json_review_author));
+                        String content = jsonItem.getString(context.getString(R.string.json_review_content));
 
-                        Movie movieItem = new Movie(idMovie, posterPathMovie);
-                        movieList.add(movieItem);
+                        Review review = new Review(idMovie, author, content);
+                        reviewList.add(review);
 
                     }
 
@@ -93,12 +95,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
         }
 
 
-        return movieList;
-    }
-
-    protected void onPostExecute(List<Movie> result) {
-
-        super.onPostExecute(result);
-        listener.onTaskComplete(result);
+        return reviewList;
     }
 }
