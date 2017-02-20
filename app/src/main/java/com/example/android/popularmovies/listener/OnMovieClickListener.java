@@ -2,7 +2,7 @@
  * Copyright (C) 2016
  */
 
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.listener;
 
 import com.example.android.popularmovies.bean.Movie;
 
