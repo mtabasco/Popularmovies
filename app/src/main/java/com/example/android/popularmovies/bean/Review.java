@@ -4,25 +4,22 @@
 
 package com.example.android.popularmovies.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
  * Bean class for storing movie info
  */
 
 public class Review {
 
-    private String idMovie;
+    private String idReview;
     private String author;
     private String content;
 
-    public String getIdMovie() {
-        return idMovie;
+    public String getIdReview() {
+        return idReview;
     }
 
-    public void setIdMovie(String idMovie) {
-        this.idMovie = idMovie;
+    public void setIdReview(String idReview) {
+        this.idReview = idReview;
     }
 
     public String getAuthor() {
@@ -43,8 +40,8 @@ public class Review {
 
 
 
-    public Review(String idMovie, String author, String content) {
-        this.idMovie = idMovie;
+    public Review(String idReview, String author, String content) {
+        this.idReview = idReview;
         this.author = author;
         this.content = content;
     }

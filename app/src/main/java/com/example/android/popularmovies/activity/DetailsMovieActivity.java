@@ -17,10 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.popularmovies.bean.Movie;
 import com.example.android.popularmovies.fragment.DetailsMovieFragment;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.fragment.ReviewsMovieFragment;
-import com.example.android.popularmovies.fragment.TrailersMovieFragment;
+import com.example.android.popularmovies.fragment.VideosMovieFragment;
 
 public class DetailsMovieActivity extends AppCompatActivity {
 
@@ -39,7 +40,7 @@ public class DetailsMovieActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-    private String idMovie;
+    private Movie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +64,12 @@ public class DetailsMovieActivity extends AppCompatActivity {
         // Retrieve the ID of the movie we want to see details
         Intent intent = getIntent();
 
-        idMovie = getString(R.string.json_id_movie);
+        String movieParam = getString(R.string.json_movie);
 
-        if (null != intent && intent.hasExtra(idMovie)) {
-            idMovie = intent.getStringExtra(idMovie);
+        if (null != intent && intent.hasExtra(movieParam)) {
+            movie = intent.getParcelableExtra(movieParam);
+
+            getSupportActionBar().setTitle(movie.getOriginalTitle());
         }
 
     }
@@ -142,7 +145,7 @@ public class DetailsMovieActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
 
             Bundle args = new Bundle();
-            args.putString(getString(R.string.json_id_movie), idMovie);
+            args.putInt(getString(R.string.json_id_movie), movie.getIdMovie());
 
             switch(position) {
 
@@ -152,7 +155,9 @@ public class DetailsMovieActivity extends AppCompatActivity {
                     return details;
 
                 case 1: // Trailers
-                    return new TrailersMovieFragment();
+                    VideosMovieFragment videos = new VideosMovieFragment();
+                    videos.setArguments(args);
+                    return videos;
 
                 case 2: // Reviews
                     Fragment reviews = new ReviewsMovieFragment();

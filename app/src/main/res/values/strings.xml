@@ -2,22 +2,24 @@
     <string name="app_name" translatable="false">Popular movies</string>
 
 
-    <string name="tmdb_api_key" translatable="false">7b519f88d04dc144946965c517b9d723</string>
-
     <string name="tmdb_scheme" translatable="false">http</string>
     <string name="tmdb_authority" translatable="false">api.themoviedb.org</string>
     <string name="tmdb_path_movie" translatable="false">3/movie</string>
     <string name="tmdb_path_popular" translatable="false">popular</string>
     <string name="tmdb_path_reviews" translatable="false">reviews</string>
+    <string name="tmdb_path_videos" translatable="false">videos</string>
     <string name="tmdb_param_api_key" translatable="false">api_key</string>
     <string name="tmdb_path_top_rated" translatable="false">top_rated</string>
     <string name="tmdb_prefix_images" translatable="false">http://image.tmdb.org/t/p/w342/</string>
+    <string name="tmdb_prefix_preview_videos" translatable="false">http://img.youtube.com/vi/</string>
+    <string name="tmdb_sufix_preview_videos" translatable="false">/hqdefault.jpg</string>
 
     <string name="user_rating">User rating: </string>
     <string name="release_date">Release date: </string>
     <string name="head_overview">Synopsis</string>
 
     <string name="json_results" translatable="false">results</string>
+    <string name="json_movie" translatable="false">movie</string>
     <string name="json_id_movie" translatable="false">id</string>
     <string name="json_poster_path" translatable="false">poster_path</string>
     <string name="json_original_title" translatable="false">original_title</string>
@@ -27,6 +29,11 @@
     <string name="json_review_id" translatable="false">id</string>
     <string name="json_review_author" translatable="false">author</string>
     <string name="json_review_content" translatable="false">content</string>
+    <string name="json_video_id" translatable="false">id</string>
+    <string name="json_video_key" translatable="false">key</string>
+    <string name="json_video_name" translatable="false">name</string>
+
+    <string name="youtube_prefix" translatable="false">vnd.youtube://</string>
 
     <string name="log_error_tag" translatable="false">ERROR</string>
     <string name="log_error_parsing_json">"Error parsing JSON "</string>

@@ -2,19 +2,13 @@ package com.example.android.popularmovies.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.bean.Movie;
 import com.example.android.popularmovies.bean.Review;
-import com.example.android.popularmovies.listener.OnMovieClickListener;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -38,7 +32,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
     @Override
     public ReviewsAdapter.ReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_movie_review, null);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movie_review, null);
 
         return new ReviewsAdapter.ReviewViewHolder(view);
     }
@@ -48,7 +42,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
 
         final Review review = mReviewsList.get(position);
 
-        holder.personPhoto.setText(review.getAuthor().substring(0,1));
+        holder.personPhoto.setText(review.getAuthor().substring(0,1).toUpperCase());
         holder.author.setText(review.getAuthor());
         holder.content.setText(review.getContent());
 

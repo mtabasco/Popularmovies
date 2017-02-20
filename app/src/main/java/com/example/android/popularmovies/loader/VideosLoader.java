@@ -7,8 +7,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.bean.Movie;
-import com.example.android.popularmovies.listener.AsyncTaskCompleteListener;
+import com.example.android.popularmovies.bean.Review;
+import com.example.android.popularmovies.bean.Video;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,18 +26,16 @@ import okhttp3.Response;
  * Created by Coco on 16/02/2017.
  */
 
-public class MoviesLoader extends AsyncTaskLoader<List<Movie>> {
+public class VideosLoader extends AsyncTaskLoader<List<Video>> {
 
     OkHttpClient client = new OkHttpClient();
     private Context context;
-    private AsyncTaskCompleteListener<List<Movie>> listener;
     private String urlMovie;
 
-    public MoviesLoader(Context ctx, AsyncTaskCompleteListener<List<Movie>> listener, Bundle args) {
+    public VideosLoader(Context ctx, Bundle args) {
         super(ctx);
 
         this.context = ctx;
-        this.listener = listener;
         this.urlMovie = args.getString(ctx.getString(R.string.param_movie_url));
     }
 
@@ -47,9 +45,9 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movie>> {
     }
 
     @Override
-    public List<Movie> loadInBackground() {
+    public List<Video> loadInBackground() {
 
-        List<Movie> movieList = new ArrayList<>();
+        List<Video> videoList = new ArrayList<>();
 
         Request.Builder builder = new Request.Builder();
         builder.url(urlMovie);
@@ -74,12 +72,12 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movie>> {
 
                         JSONObject jsonItem = jsonArray.getJSONObject(i);
 
-                        int idMovie = jsonItem.getInt(context.getString(R.string.json_id_movie));
-                        String posterPathMovie = jsonItem.getString(context.getString(R.string.json_poster_path)).substring(1);
-                        String originalTitle = jsonItem.getString(context.getString(R.string.json_original_title));
+                        String idVideo = jsonItem.getString(context.getString(R.string.json_video_id));
+                        String key = jsonItem.getString(context.getString(R.string.json_video_key));
+                        String name = jsonItem.getString(context.getString(R.string.json_video_name));
 
-                        Movie movieItem = new Movie(idMovie, posterPathMovie, originalTitle);
-                        movieList.add(movieItem);
+                        Video video = new Video(idVideo, key, name);
+                        videoList.add(video);
 
                     }
 
@@ -96,6 +94,6 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movie>> {
         }
 
 
-        return movieList;
+        return videoList;
     }
 }

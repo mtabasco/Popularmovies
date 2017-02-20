@@ -73,11 +73,11 @@ public class ReviewsLoader extends AsyncTaskLoader<List<Review>> {
 
                         JSONObject jsonItem = jsonArray.getJSONObject(i);
 
-                        String idMovie = jsonItem.getString(context.getString(R.string.json_review_id));
+                        String idReview = jsonItem.getString(context.getString(R.string.json_review_id));
                         String author = jsonItem.getString(context.getString(R.string.json_review_author));
                         String content = jsonItem.getString(context.getString(R.string.json_review_content));
 
-                        Review review = new Review(idMovie, author, content);
+                        Review review = new Review(idReview, author, content);
                         reviewList.add(review);
 
                     }

@@ -30,20 +30,23 @@ import com.squareup.picasso.Picasso;
 public class DetailsMovieFragment extends Fragment {
 
     private Movie movie;
+    private View rootView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (null != getArguments() && null != getArguments().getString(getContext().getString(R.string.json_id_movie))) {
+        setRetainInstance(true);
 
-            String idMovie = getArguments().getString(getContext().getString(R.string.json_id_movie));
+        if (null != getArguments()) {
+
+            int idMovie = getArguments().getInt(getContext().getString(R.string.json_id_movie));
 
             // Build query to retrieve the movie details
             Uri.Builder builder = new Uri.Builder().scheme(getString(R.string.tmdb_scheme))
                     .authority(getString(R.string.tmdb_authority))
                     .appendEncodedPath(getString(R.string.tmdb_path_movie))
-                    .appendPath(idMovie)
+                    .appendPath(String.valueOf(idMovie))
                     .appendQueryParameter(getString(R.string.tmdb_param_api_key), getString(R.string.tmdb_api_key));
 
             String myUrl = builder.build().toString();
@@ -61,7 +64,8 @@ public class DetailsMovieFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_details_movie, container, false);
+        rootView = inflater.inflate(R.layout.fragment_details_movie, container, false);
+        return rootView;
     }
 
     @Override
@@ -90,12 +94,14 @@ public class DetailsMovieFragment extends Fragment {
             Toast.makeText(getContext(), R.string.error_retrieving_movie_info, Toast.LENGTH_SHORT).show();
         } else {
 
+
+
             // Load views
-            TextView titleView = (TextView) getView().findViewById(R.id.tv_title);
-            ImageView posterView = (ImageView) getView().findViewById(R.id.iv_poster_details);
-            TextView overviewView = (TextView) getView().findViewById(R.id.tv_overview);
-            TextView userRatingView = (TextView) getView().findViewById(R.id.tv_user_rating);
-            TextView releaseDateView = (TextView) getView().findViewById(R.id.tv_release_date);
+            TextView titleView = (TextView) rootView.findViewById(R.id.tv_title);
+            ImageView posterView = (ImageView) rootView.findViewById(R.id.iv_poster_details);
+            TextView overviewView = (TextView) rootView.findViewById(R.id.tv_overview);
+            TextView userRatingView = (TextView) rootView.findViewById(R.id.tv_user_rating);
+            TextView releaseDateView = (TextView) rootView.findViewById(R.id.tv_release_date);
 
             // Compose Url for poster photo
             String urlImage = getString(R.string.tmdb_prefix_images) + movieDetail.getPosterPath();

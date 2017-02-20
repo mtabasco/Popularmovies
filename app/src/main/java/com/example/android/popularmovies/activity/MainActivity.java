@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onMovieClick(Movie item) {
 
                 Intent intent = new Intent(getApplicationContext(), DetailsMovieActivity.class);
-                intent.putExtra(getString(R.string.json_id_movie), String.valueOf(item.getIdMovie()));
+                intent.putExtra(getString(R.string.json_movie), item);
 
                 startActivity(intent);
             }

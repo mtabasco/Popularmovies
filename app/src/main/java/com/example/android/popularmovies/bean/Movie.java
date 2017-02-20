@@ -83,10 +83,11 @@ public class Movie implements Parcelable {
 
 
 
-    public Movie (int idMovie, String posterPath) {
+    public Movie (int idMovie, String posterPath, String originalTitle) {
 
         this.idMovie = idMovie;
         this.posterPath = posterPath;
+        this.originalTitle = originalTitle;
     }
 
 
