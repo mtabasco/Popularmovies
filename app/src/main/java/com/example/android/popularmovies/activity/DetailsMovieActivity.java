@@ -1,6 +1,8 @@
 package com.example.android.popularmovies.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,8 +18,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.bean.Movie;
+import com.example.android.popularmovies.data.FavoritesContract;
 import com.example.android.popularmovies.fragment.DetailsMovieFragment;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.fragment.ReviewsMovieFragment;
@@ -90,10 +95,36 @@ public class DetailsMovieActivity extends AppCompatActivity {
                 // overrides the behaviour of appbar's back button
                 onBackPressed();
                 return true;
+            case R.id.action_favorite:
+                onClickAddFavorite();
         }
         return false;
     }
 
+    /**
+     * onClickAddTask is called when the "ADD" button is clicked.
+     * It retrieves user input and inserts that new task data into the underlying database.
+     */
+    public void onClickAddFavorite() {
+
+
+        // Insert new task data via a ContentResolver
+        // Create new empty ContentValues object
+        ContentValues contentValues = new ContentValues();
+        // Put the task description and selected mPriority into the ContentValues
+        contentValues.put(FavoritesContract.MovieEntry.COLUMN_ID_TMDB, movie.getIdMovie());
+        contentValues.put(FavoritesContract.MovieEntry.COLUMN_TITLE, movie.getOriginalTitle());
+
+        // Insert the content values via a ContentResolver
+        Uri uri = getContentResolver().insert(FavoritesContract.MovieEntry.CONTENT_URI, contentValues);
+
+        // Display the URI that's returned with a Toast
+        // [Hint] Don't forget to call finish() to return to MainActivity after this insert is complete
+        if(uri != null) {
+            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+        }
+
+    }
 
     /**
      * A placeholder fragment containing a simple view.
