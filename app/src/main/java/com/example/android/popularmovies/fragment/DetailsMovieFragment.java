@@ -97,7 +97,6 @@ public class DetailsMovieFragment extends Fragment {
 
 
             // Load views
-            TextView titleView = (TextView) rootView.findViewById(R.id.tv_title);
             ImageView posterView = (ImageView) rootView.findViewById(R.id.iv_poster_details);
             TextView overviewView = (TextView) rootView.findViewById(R.id.tv_overview);
             TextView userRatingView = (TextView) rootView.findViewById(R.id.tv_user_rating);
@@ -112,7 +111,6 @@ public class DetailsMovieFragment extends Fragment {
             }
 
             // Set details info
-            titleView.setText(movieDetail.getOriginalTitle());
             userRatingView.append(movieDetail.getVoteAverage());
             releaseDateView.append(movieDetail.getReleaseDate());
             overviewView.setText(movieDetail.getOverview());

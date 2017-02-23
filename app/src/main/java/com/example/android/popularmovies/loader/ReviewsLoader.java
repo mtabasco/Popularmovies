@@ -7,9 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.bean.Movie;
 import com.example.android.popularmovies.bean.Review;
-import com.example.android.popularmovies.listener.AsyncTaskCompleteListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -16,6 +16,9 @@ public class Movie implements Parcelable {
     private int idMovie;
     private String posterPath;
     private String originalTitle;
+    private String overview;
+    private String voteAverage;
+    private String releaseDate;
 
     public Movie(int idMovie, String posterPath, String originalTitle, String overview, String voteAverage, String releaseDate) {
         this.idMovie = idMovie;
@@ -26,8 +29,7 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
-    private String overview;
-    private String voteAverage;
+
 
     public int getIdMovie() {
         return idMovie;
@@ -77,18 +79,7 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
-    private String releaseDate;
 
-
-
-
-
-    public Movie (int idMovie, String posterPath, String originalTitle) {
-
-        this.idMovie = idMovie;
-        this.posterPath = posterPath;
-        this.originalTitle = originalTitle;
-    }
 
 
     public Movie() {

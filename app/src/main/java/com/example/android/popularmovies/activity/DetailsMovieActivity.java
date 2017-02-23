@@ -2,29 +2,30 @@ package com.example.android.popularmovies.activity;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.bean.Movie;
 import com.example.android.popularmovies.data.FavoritesContract;
 import com.example.android.popularmovies.fragment.DetailsMovieFragment;
-import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.fragment.ReviewsMovieFragment;
 import com.example.android.popularmovies.fragment.VideosMovieFragment;
 
@@ -45,7 +46,10 @@ public class DetailsMovieActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    private static final int MOVIES_LOADER = R.integer.movies_loader;
+
     private Movie movie;
+    private boolean isFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,8 @@ public class DetailsMovieActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(movie.getOriginalTitle());
         }
 
+        isFavorite = isFovoriteMovie(movie.getIdMovie());
+
     }
 
 
@@ -84,29 +90,58 @@ public class DetailsMovieActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_details_movie, menu);
+
+        if(isFavorite) {
+
+            menu.getItem(0).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_action_favorite_checked));
+        }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
 
+            case android.R.id.home:
                 // overrides the behaviour of appbar's back button
                 onBackPressed();
                 return true;
+
             case R.id.action_favorite:
-                onClickAddFavorite();
+                if(isFavorite) {
+                    removeFavorite();
+                } else {
+                    addFavorite();
+                }
         }
         return false;
     }
+
+
+    private boolean isFovoriteMovie(int idMovie) {
+
+        boolean isFavorite;
+
+        Cursor cursor = getContentResolver().query(FavoritesContract.MovieEntry.CONTENT_URI, null, "id_tmdb = ?", new String[]{String.valueOf(idMovie)}, null);
+
+        if(null != cursor && cursor.getCount() > 0) {
+            isFavorite = true;
+        } else {
+            isFavorite = false;
+        }
+
+        cursor.close();
+
+        return isFavorite;
+    }
+
 
     /**
      * onClickAddTask is called when the "ADD" button is clicked.
      * It retrieves user input and inserts that new task data into the underlying database.
      */
-    public void onClickAddFavorite() {
-
+    private void addFavorite() {
 
         // Insert new task data via a ContentResolver
         // Create new empty ContentValues object
@@ -114,6 +149,12 @@ public class DetailsMovieActivity extends AppCompatActivity {
         // Put the task description and selected mPriority into the ContentValues
         contentValues.put(FavoritesContract.MovieEntry.COLUMN_ID_TMDB, movie.getIdMovie());
         contentValues.put(FavoritesContract.MovieEntry.COLUMN_TITLE, movie.getOriginalTitle());
+        contentValues.put(FavoritesContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+        contentValues.put(FavoritesContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+        contentValues.put(FavoritesContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+        contentValues.put(FavoritesContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+
+        // TODO add image poster (fetch in asyncTaskLoader and save it in a BLOB)
 
         // Insert the content values via a ContentResolver
         Uri uri = getContentResolver().insert(FavoritesContract.MovieEntry.CONTENT_URI, contentValues);
@@ -121,7 +162,24 @@ public class DetailsMovieActivity extends AppCompatActivity {
         // Display the URI that's returned with a Toast
         // [Hint] Don't forget to call finish() to return to MainActivity after this insert is complete
         if(uri != null) {
-            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), R.string.toast_movie_added, Toast.LENGTH_LONG).show();
+            ((MenuView.ItemView) findViewById(R.id.action_favorite)).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_action_favorite_checked));
+        }
+
+    }
+
+    private void removeFavorite() {
+
+        Uri uri = FavoritesContract.MovieEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(String.valueOf(movie.getIdMovie())).build();
+
+        // COMPLETED (2) Delete a single row of data using a ContentResolver
+        int moviesDeleted = getContentResolver().delete(uri, null, null);
+
+        if(moviesDeleted > 0 ){
+            Toast.makeText(getBaseContext(), R.string.toast_movie_removed, Toast.LENGTH_LONG).show();
+            ((MenuView.ItemView) findViewById(R.id.action_favorite)).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_action_favorite));
+            isFavorite = false;
         }
 
     }

@@ -28,6 +28,14 @@ package="com.example.android.popularmovies">
             android:value="com.example.android.popularmovies.activity.MainActivity" />
     </activity>
 
+    <!-- Register the TaskContentProvider -->
+    <!-- Set name, authorities, and exported attributes -->
+    <!-- exported = false limits access to this ContentProvider to only this app -->
+    <provider
+        android:name="com.example.android.popularmovies.data.MovieContentProvider"
+        android:authorities="com.example.android.popularmovies"
+        android:exported="false"/>
+
 </application>
 
 </manifest>

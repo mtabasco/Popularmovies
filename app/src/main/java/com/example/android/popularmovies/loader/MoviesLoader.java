@@ -77,8 +77,12 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movie>> {
                         int idMovie = jsonItem.getInt(context.getString(R.string.json_id_movie));
                         String posterPathMovie = jsonItem.getString(context.getString(R.string.json_poster_path)).substring(1);
                         String originalTitle = jsonItem.getString(context.getString(R.string.json_original_title));
+                        String overview = jsonItem.getString(context.getString(R.string.json_overview));
+                        String releaseDate = jsonItem.getString(context.getString(R.string.json_release_date));
+                        String voteAverage = jsonItem.getString(context.getString(R.string.json_vote_average));
 
-                        Movie movieItem = new Movie(idMovie, posterPathMovie, originalTitle);
+
+                        Movie movieItem = new Movie(idMovie, posterPathMovie, originalTitle, overview, voteAverage, releaseDate);
                         movieList.add(movieItem);
 
                     }

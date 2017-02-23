@@ -44,6 +44,7 @@
     <string-array name="array_filter_movies">
         <item>Popular</item>
         <item>Top rated</item>
+        <item>Favorites</item>
     </string-array>
     <string name="title_activity_details_movie">Movie Details</string>
     <string name="action_favorite">Favorite</string>
@@ -52,5 +53,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="param_movie_object">movie_object</string>
     <string name="param_movie_url">movie_url</string>
+    <string name="toast_movie_added">Movie added to favorites!</string>
+    <string name="toast_movie_removed">Movie removed from favorites</string>
 
 </resources>

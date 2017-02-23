@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +14,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.activity.DetailsMovieActivity;
-import com.example.android.popularmovies.adapter.ReviewsAdapter;
 import com.example.android.popularmovies.adapter.VideosAdapter;
-import com.example.android.popularmovies.bean.Movie;
 import com.example.android.popularmovies.bean.Video;
-import com.example.android.popularmovies.listener.OnMovieClickListener;
 import com.example.android.popularmovies.listener.OnVideoClickListener;
-import com.example.android.popularmovies.loader.ReviewsLoader;
 import com.example.android.popularmovies.loader.VideosLoader;
 
 import java.util.List;
@@ -84,9 +78,6 @@ public class VideosMovieFragment extends Fragment implements LoaderManager.Loade
 
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.rv_list_videos);
 
-        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
     @Override

@@ -5,10 +5,7 @@
 
 package com.example.android.popularmovies.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -18,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,7 +25,9 @@ import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.adapter.MoviesAdapter;
 import com.example.android.popularmovies.bean.Movie;
 import com.example.android.popularmovies.listener.OnMovieClickListener;
+import com.example.android.popularmovies.loader.FavoritesLoader;
 import com.example.android.popularmovies.loader.MoviesLoader;
+import com.example.android.popularmovies.util.Utils;
 
 import java.util.List;
 
@@ -38,17 +36,53 @@ import java.util.List;
  * providing filter: popular and top rated.
  */
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, LoaderManager.LoaderCallbacks<List<Movie>> {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
 
     private static final String LIST_STATE_KEY = "LIST_STATE_KEY";
-    private static final int MOVIES_LOADER = 100;
+    private static final int MOVIES_LOADER = R.integer.movies_loader;
+    private static final int FAVORITES_LOADER = R.integer.favorites_loader;
     private RecyclerView mRecyclerView;
     private MoviesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     Parcelable mListState;
 
+    private LoaderManager.LoaderCallbacks<List<Movie>> loaderMovies = new LoaderManager.LoaderCallbacks<List<Movie>>() {
+        @Override
+        public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+            return new MoviesLoader(getApplicationContext(), null, args);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
+
+            bindToAdapter(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<Movie>> loader) {
+
+        }
+    };
+
+    private LoaderManager.LoaderCallbacks<List<Movie>> loaderFavorites = new LoaderManager.LoaderCallbacks<List<Movie>>() {
+        @Override
+        public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+            return new FavoritesLoader(getApplicationContext(), getContentResolver());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
+
+            bindToAdapter(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<Movie>> loader) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        mLayoutManager = new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getBaseContext()));
+        mLayoutManager = new GridLayoutManager(getApplicationContext(), Utils.calculateNoOfColumns(getBaseContext()));
 
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -91,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
         // Check if internet connection is present
-        if (!isOnline()) {
+        if (!Utils.isOnline(this)) {
 
             Toast.makeText(getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
         } else {
@@ -132,19 +166,41 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     loadLoader(MOVIES_LOADER, args);
 
+                    return;
+
+                case 2: // Favorites
+
+                    loadLoader(FAVORITES_LOADER, null);
+                    return;
             }
         }
     }
 
+
+
     private void loadLoader(int loaderId, Bundle args) {
 
         LoaderManager loaderManager = getSupportLoaderManager();
-        Loader<String> moviesLoader = loaderManager.getLoader(MOVIES_LOADER);
+        Loader<String> loader = loaderManager.getLoader(loaderId);
 
-        if (moviesLoader == null) {
-            loaderManager.initLoader(loaderId, args, this).forceLoad();
-        } else {
-            loaderManager.restartLoader(loaderId, args, this).forceLoad();
+        switch (loaderId) {
+            case MOVIES_LOADER:
+
+                if (loader == null) {
+                    loaderManager.initLoader(loaderId, args, loaderMovies).forceLoad();
+                } else {
+                    loaderManager.restartLoader(loaderId, args, loaderMovies).forceLoad();
+                }
+                return;
+
+            case FAVORITES_LOADER:
+
+                if (loader == null) {
+                    loaderManager.initLoader(loaderId, args, loaderFavorites).forceLoad();
+                } else {
+                    loaderManager.restartLoader(loaderId, args, loaderFavorites).forceLoad();
+                }
+                return;
         }
     }
 
@@ -152,13 +208,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
+/*
+        Spinner spinner = (Spinner) findViewById(R.id.sp_filter);
+        if(spinner.getSelectedItem().equals("Favorites")) {
 
+            loadLoader(FAVORITES_LOADER, null);
+        }
+*/
         if (mListState != null) {
             mLayoutManager.onRestoreInstanceState(mListState);
         }
-
-        //mRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getBaseContext())));
-
     }
 
     @Override
@@ -180,12 +239,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private static int calculateNoOfColumns(Context context) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int noOfColumns = (int) (dpWidth / 180);
-        return noOfColumns;
-    }
+
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
@@ -193,26 +247,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    /**
-     * Checks if there is connectivity
-     */
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-
-    @Override
-    public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-        return new MoviesLoader(this, null, args);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> result) {
+    private void bindToAdapter(List<Movie> movieList) {
 
         // Create the Adapter
-        mAdapter = new MoviesAdapter(getApplicationContext(), result);
+        mAdapter = new MoviesAdapter(getApplicationContext(), movieList);
         mRecyclerView.setAdapter(mAdapter);
 
         // Add click listener. When clicked, start movie details activity
@@ -226,11 +264,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 startActivity(intent);
             }
         });
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Movie>> loader) {
-
     }
 
 }

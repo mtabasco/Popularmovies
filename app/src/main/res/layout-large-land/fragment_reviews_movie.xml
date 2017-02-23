@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.android.popularmovies.fragment.VideosMovieFragment">
+    tools:context="com.example.android.popularmovies.fragment.ReviewsMovieFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_list_videos"
+        android:id="@+id/rv_list_reviews"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"/>
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/margin"
+        android:layout_marginRight="@dimen/margin"/>
 
 </FrameLayout>

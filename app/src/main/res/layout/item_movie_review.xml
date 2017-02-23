@@ -41,8 +41,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/review_author"
             android:layout_toRightOf="@+id/person_photo"
-            android:fontFamily="sans-serif"
-            android:textSize="14sp" />
+            android:fontFamily="sans-serif-light"
+            android:textSize="@dimen/dim_text_details" />
 
     </RelativeLayout>
 

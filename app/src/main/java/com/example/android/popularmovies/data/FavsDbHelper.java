@@ -29,7 +29,7 @@ public class FavsDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "favoritesDB.db";
 
     // If you change the database schema, you must increment the database version
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
 
     // Constructor
@@ -52,7 +52,7 @@ public class FavsDbHelper extends SQLiteOpenHelper {
                         MovieEntry.COLUMN_OVERVIEW + " TEXT NULL, " +
                         MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
                         MovieEntry.COLUMN_VOTE_AVERAGE + " TEXT NULL, " +
-                        MovieEntry.COLUMN_POSTER + " BLOB NOT NULL);";
+                        MovieEntry.COLUMN_POSTER_PATH + " TEXT NULL);";
 
         db.execSQL(CREATE_TABLE);
     }

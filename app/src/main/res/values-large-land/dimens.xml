@@ -1,0 +1,5 @@
+<resources>
+
+    <dimen name="dim_text_details">15sp</dimen>
+    <dimen name="margin">200dp</dimen>
+</resources>

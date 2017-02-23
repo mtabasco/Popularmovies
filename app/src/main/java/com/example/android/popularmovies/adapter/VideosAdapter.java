@@ -10,9 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.bean.Review;
 import com.example.android.popularmovies.bean.Video;
-import com.example.android.popularmovies.listener.OnMovieClickListener;
 import com.example.android.popularmovies.listener.OnVideoClickListener;
 import com.squareup.picasso.Picasso;
 

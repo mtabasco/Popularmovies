@@ -36,7 +36,7 @@ public class FavoritesContract {
         // "_ID" column in addition to the two below
         public static final String COLUMN_ID_TMDB = "id_tmdb";
         public static final String COLUMN_TITLE = "original_title";
-        public static final String COLUMN_POSTER = "poster_path";
+        public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
         public static final String COLUMN_RELEASE_DATE = "release_date";
