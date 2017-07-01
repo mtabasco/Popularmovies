@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,11 +23,16 @@ import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.adapter.MoviesAdapter;
 import com.example.android.popularmovies.bean.Movie;
 import com.example.android.popularmovies.listener.OnMovieClickListener;
-import com.example.android.popularmovies.loader.FavoritesLoader;
-import com.example.android.popularmovies.loader.MoviesLoader;
+import com.example.android.popularmovies.loader.RxFavoriteMoviesLoader;
+import com.example.android.popularmovies.loader.RxMoviesLoader;
 import com.example.android.popularmovies.util.Utils;
 
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Main activity for popular movies. Shows a grid of poster movies,
@@ -46,43 +49,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private MoviesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    RxMoviesLoader rxMoviesLoader;
+    RxMoviesLoader rxTopMoviesLoader;
+
     Parcelable mListState;
 
-    private LoaderManager.LoaderCallbacks<List<Movie>> loaderMovies = new LoaderManager.LoaderCallbacks<List<Movie>>() {
-        @Override
-        public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-            return new MoviesLoader(getApplicationContext(), null, args);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
-
-            bindToAdapter(data);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Movie>> loader) {
-
-        }
-    };
-
-    private LoaderManager.LoaderCallbacks<List<Movie>> loaderFavorites = new LoaderManager.LoaderCallbacks<List<Movie>>() {
-        @Override
-        public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-            return new FavoritesLoader(getApplicationContext(), getContentResolver());
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
-
-            bindToAdapter(data);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Movie>> loader) {
-
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +119,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     args.putString(getString(R.string.param_movie_url), tmdbUrl);
 
-                    loadLoader(MOVIES_LOADER, args);
+                    //LoadLoader(MOVIES_LOADER, args);
+                    rxMoviesLoader = new RxMoviesLoader(this, args);
+
+                    rxMoviesLoader.getMoviesObservable()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Consumer<List<Movie>>() {
+                                @Override
+                                public void accept(@NonNull List<Movie> movies) throws Exception {
+                                    bindToAdapter(movies);
+                                }
+                            });
 
                     return;
 
@@ -164,45 +146,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     args.putString(getString(R.string.param_movie_url), tmdbUrl);
 
-                    loadLoader(MOVIES_LOADER, args);
+                    //loadLoader(MOVIES_LOADER, args);
+                    rxTopMoviesLoader = new RxMoviesLoader(this, args);
+
+                    rxTopMoviesLoader.getMoviesObservable()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Consumer<List<Movie>>() {
+                                @Override
+                                public void accept(@NonNull List<Movie> movies) throws Exception {
+                                    bindToAdapter(movies);
+                                }
+                            });
 
                     return;
 
                 case 2: // Favorites
 
-                    loadLoader(FAVORITES_LOADER, null);
+                    RxFavoriteMoviesLoader rxfavoritesLoader = new RxFavoriteMoviesLoader(getContentResolver());
+
+                    rxfavoritesLoader.getFavoriteMoviesObservable()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Consumer<List<Movie>>() {
+                                @Override
+                                public void accept(@NonNull List<Movie> movies) throws Exception {
+                                    bindToAdapter(movies);
+                                }
+                            });
+
                     return;
             }
         }
     }
 
-
-
-    private void loadLoader(int loaderId, Bundle args) {
-
-        LoaderManager loaderManager = getSupportLoaderManager();
-        Loader<String> loader = loaderManager.getLoader(loaderId);
-
-        switch (loaderId) {
-            case MOVIES_LOADER:
-
-                if (loader == null) {
-                    loaderManager.initLoader(loaderId, args, loaderMovies).forceLoad();
-                } else {
-                    loaderManager.restartLoader(loaderId, args, loaderMovies).forceLoad();
-                }
-                return;
-
-            case FAVORITES_LOADER:
-
-                if (loader == null) {
-                    loaderManager.initLoader(loaderId, args, loaderFavorites).forceLoad();
-                } else {
-                    loaderManager.restartLoader(loaderId, args, loaderFavorites).forceLoad();
-                }
-                return;
-        }
-    }
 
 
     @Override
@@ -266,4 +243,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
 }
